@@ -1,22 +1,38 @@
-const path = require('path')
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-   entry: './src/index.tsx',
-   module: {
-     rules: [
-       {
-         test: /\.tsx$/,
-         use: 'ts-loader',
-         exclude: /node_modules/,
-       },
-     ],
-   },
-   resolve: {
-     extensions: ['.js', '.ts', '.tsx'],
-   },
+  entry: './src/index.tsx',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/, // .ts と .tsx 両方OK
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'index.js',
-    publicPath: 'dist/',
-  }
-}
+    publicPath: '/', // ルートパスに配信
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './index.html', // 既存の index.html を利用
+    }),
+  ],
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
+    devMiddleware: {
+      publicPath: '/', // /dist/ ではなく /
+    },
+    hot: true,
+    open: true,
+  },
+};
