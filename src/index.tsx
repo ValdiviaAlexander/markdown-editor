@@ -5,31 +5,42 @@ import styled, { createGlobalStyle } from 'styled-components'
 import { Editor } from './pages/editor'
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { History } from './pages/history'
+import { useStateWithStorage } from './hooks/use_state_with_storage'
 
 const GlobalStyle = createGlobalStyle`
   body * { box-sizing: border-box; }
 `
 
-const App: React.FC = () => (
-  <>
-    <GlobalStyle />
-    <Router>
-      <Routes>
-        {/* / → /editor へ */}
-        <Route path="/" element={<Navigate to="/editor" replace />} />
-        <Route path="/editor" element={<Editor />} />
-        <Route path="/history" element={<History />} />
-        {/* 不明パスも /editor へ */}
-        <Route path="*" element={<Navigate to="/editor" replace />} />
-      </Routes>
-    </Router>
-  </>
-)
+const StorageKey = '/editor:text'
 
-// index.html 側の id と合わせる（例: <div id="app"></div>）
-const el = document.getElementById('app')!
-createRoot(el).render(<App />)
+const Main: React.FC = () => {
+    const [text, setText] = useStateWithStorage('', StorageKey)
+  
+    return (
+      <>
+        <GlobalStyle />
+        <Router>
+          <Routes>
+            <Route
+              path="/editor"
+              element={<Editor text={text} setText={setText} />}
+            />
+            <Route
+              path="/history"
+              element={<History setText={setText} />}
+            />
+            <Route
+              path="*"
+              element={<Navigate to="/editor" replace />}
+            />
+          </Routes>
+        </Router>
+      </>
+    )
+  }
+  
+  const container = document.getElementById('app');
+  if (container) {
+    createRoot(container).render(<Main />);
+  }
 
-// ※ React 17 を使っているなら下を使う：
-// import { render } from 'react-dom'
-// render(<App />, document.getElementById('app'))
