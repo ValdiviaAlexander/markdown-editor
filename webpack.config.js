@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/index.tsx',
@@ -24,10 +25,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './index.html', // 既存の index.html を利用
     }),
+    new CopyWebpackPlugin({ patterns: [{ from: 'public', to: '.' }] }),
   ],
   devServer: {
     static: {
-      directory: path.join(__dirname, 'dist'),
+      directory: path.join(__dirname, 'dist'),   // dist も配信
+      directory: path.join(__dirname, 'public'), // public も配信 ← 追加
     },
     devMiddleware: {
       publicPath: '/', // /dist/ ではなく /
