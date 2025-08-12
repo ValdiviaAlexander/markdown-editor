@@ -34,5 +34,12 @@ module.exports = {
     },
     hot: true,
     open: true,
+    client: {
+      overlay: {
+        errors: true,        // コンパイルエラーは表示
+        warnings: false,
+        runtimeErrors: false // ★ これでランタイムの赤画面を止める
+      }
+    }
   },
 };
